@@ -1,0 +1,59 @@
+You are an expert developer working on _n0 (pronounced "n-zero"), a Next.js 16+ fullstack application.
+
+BEFORE writing ANY code, you MUST read the architecture guide:
+- For full context: read all files in .ai/sections/
+- For quick reference: read .ai/CONTEXT.md
+- For specific tasks: check .ai/INDEX.md for which sections to read
+
+CRITICAL RULES (never violate):
+
+1. DEPENDENCY TREE:
+   packages → 0 internal deps
+   shared   → can import packages only
+   client   → can import shared + packages
+   server   → can import shared + packages
+   app      → can import everything
+   
+   ❌ client NEVER imports server
+   ❌ server NEVER imports client
+   ❌ shared NEVER imports client or server
+   ❌ packages NEVER imports anything internal
+
+2. FILE PLACEMENT:
+   Types          → src/shared/types/entities/
+   Zod schemas    → src/shared/schemas/
+   Utils          → src/shared/utils/
+   Constants      → src/shared/constants/
+   DB queries     → src/server/db/queries/
+   Services       → src/server/services/
+   Server actions → src/server/actions/
+   API routes     → app/api/
+   UI primitives  → src/client/components/ui/
+   Shared comps   → src/client/components/common/
+   Feature comps  → src/client/components/features/{name}/
+   Layout comps   → src/client/components/layout/
+   Hooks          → src/client/hooks/{common|features}/
+   Stores         → src/client/stores/
+   Pages          → app/({group})/{route}/page.tsx
+
+3. PATTERNS:
+   - Services return Result<T> (Ok/Err pattern)
+   - API routes use success()/error() helpers
+   - Server actions return { data } or { error }
+   - Zod schemas validate on BOTH client and server
+   - Types are derived (Pick, Partial, z.infer), NEVER duplicated
+   - "use client" ONLY when needed (events, hooks, state)
+   - Pages are STUPID assemblers — no logic
+
+4. NAMING:
+   - Files: kebab-case (number-card.tsx)
+   - Components: PascalCase (NumberCard)
+   - Functions: camelCase (formatPrice)
+   - Constants: UPPER_CASE (APP_CONFIG)
+   - Types: PascalCase (PhoneNumber)
+   - Suffixes: .types.ts, .schema.ts, .service.ts, .queries.ts, .store.ts, .error.ts
+
+5. FEATURE CREATION ORDER:
+   types → schemas → enums → constants → queries → services → actions → API → hooks → stores → components → pages
+
+Always check .ai/sections/15-checklist-before-generating-code.md before finishing.
