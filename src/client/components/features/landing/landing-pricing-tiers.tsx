@@ -1,11 +1,11 @@
-"use client";
-
+import Link from "next/link";
 import * as React from "react";
 import { Button } from "@/client/components/ui/optics/button";
 import { Badge } from "@/client/components/ui/optics/badge";
 import { Coins, Zap, Timer } from "lucide-react";
 import { cn } from "@/client/lib/utils";
 import { motion } from "motion/react";
+import { ROUTES } from "@/shared/constants";
 
 const plans = [
     {
@@ -140,18 +140,19 @@ export function LandingPricing() {
                                 </Badge>
                             </div>
 
-                            <Button
-                                onClick={() => { }}
-                                size="lg"
-                                className={cn(
-                                    "w-full rounded-[2rem] py-6 sm:py-8 lg:py-10 mt-8 sm:mt-12 text-lg sm:text-xl font-bold transition-transform group-hover:scale-[1.02]",
-                                    plan.popular
-                                        ? "bg-primary text-primary-foreground shadow-lg"
-                                        : "bg-secondary text-secondary-foreground hover:bg-secondary/90"
-                                )}
-                            >
-                                Acheter Maintenant
-                            </Button>
+                            <Link href={ROUTES.REGISTER} className="w-full">
+                                <Button
+                                    size="lg"
+                                    className={cn(
+                                        "w-full rounded-[2rem] py-6 sm:py-8 lg:py-10 mt-8 sm:mt-12 text-lg sm:text-xl font-bold transition-transform group-hover:scale-[1.02]",
+                                        plan.popular
+                                            ? "bg-primary text-primary-foreground shadow-lg"
+                                            : "bg-secondary text-secondary-foreground hover:bg-secondary/90"
+                                    )}
+                                >
+                                    Acheter Maintenant
+                                </Button>
+                            </Link>
                         </div>
                     </motion.div>
                 ))}

@@ -1,11 +1,12 @@
-export const AUTH_COOKIE_NAME = "n0-auth-token";
+const JWT_SECRET = process.env.JWT_SECRET;
 
-export const SESSION_DURATION = 60 * 60 * 24 * 7; // 7 days in seconds
+if (!JWT_SECRET && process.env.NODE_ENV === "production") {
+    throw new Error("FATAL: JWT_SECRET environment variable is not set.");
+}
 
-export const AUTH_MESSAGES = {
-    UNAUTHORIZED: "Vous devez être connecté pour accéder à cette page",
-    FORBIDDEN: "Vous n'avez pas les permissions nécessaires",
-    INVALID_CREDENTIALS: "Email ou mot de passe incorrect",
-    ACCOUNT_INACTIVE: "Votre compte est désactivé",
-    EMAIL_EXISTS: "Cet email est déjà utilisé",
+export const AUTH_CONFIG = {
+    TOKEN_NAME: "auth-token",
+    JWT_SECRET: JWT_SECRET || "dev-only-secret-do-not-use-in-prod",
+    COOKIE_TTL: 60 * 60, // 1 hour for better security (P0)
+    SALT_ROUNDS: 10,
 };

@@ -1,105 +1,91 @@
-import { compare, hash } from "bcryptjs";
-import { SignJWT, jwtVerify } from "jose";
 import { Ok, Err, type Result } from "@/packages/result";
 import { UserQueries } from "@/server/db/queries/user.queries";
-import type { SessionUser, User } from "@/shared/types";
-import type { LoginInput, RegisterInput } from "@/shared/schemas";
-import { UserRole } from "@/shared/enums";
-import { AUTH_COOKIE_NAME, SESSION_DURATION } from "@/shared/constants/auth.constants";
+import { AUTH_CONFIG } from "@/shared/constants";
+import type { SessionUser, AuthPayload } from "@/shared/types";
+import type { LoginInput, RegisterServerInput } from "@/shared/schemas";
+import bcrypt from "bcryptjs";
+import { SignJWT, jwtVerify } from "jose";
 
-const JWT_SECRET = new TextEncoder().encode(
-    process.env.JWT_SECRET || "fallback-secret-for-dev-only"
-);
+const secret = new TextEncoder().encode(AUTH_CONFIG.JWT_SECRET);
 
-export class AuthService {
+export const AuthService = {
     /**
-     * Authenticate a user and return a session token
+     * Generates a secure JWT with a minimal payload.
      */
-    static async login(input: LoginInput): Promise<Result<{ user: SessionUser; token: string }>> {
-        const user = await UserQueries.findByEmail(input.email);
+    async generateToken(user: { id: string; role: string }): Promise<string> {
+        const payload: AuthPayload = {
+            sub: user.id,
+            role: user.role as any,
+        };
 
-        if (!user) {
-            return Err(new Error("Identifiants incorrects"));
+        return new SignJWT(payload)
+            .setProtectedHeader({ alg: "HS256" })
+            .setIssuedAt()
+            .setExpirationTime("1h") // P0: Short TTL
+            .sign(secret);
+    },
+
+    /**
+     * Authenticates a user by phone and password.
+     */
+    async login(input: LoginInput): Promise<Result<{ token: string; user: SessionUser }>> {
+        const user = await UserQueries.findByPhone(input.phone);
+
+        if (!user || !user.isActive) {
+            return Err(new Error("Accès refusé. Numéro inconnu ou compte désactivé."));
         }
 
-        if (!user.isActive) {
-            return Err(new Error("Compte désactivé"));
-        }
-
-        // For mock users, we might have plain passwords or hashed ones. 
-        // In real app, we use compare().
-        // If it's a mock user from UserQueries, we've set passwords there too.
-        const isValid = await compare(input.password, (user as any).passwordHash || await hash(input.password, 10)); // Simplified for mock
-
-        // Fallback logic for mock users being plain text in my previous UserQueries implementation
-        // I should probably update UserQueries to store passwordHash instead of relying on a separate map.
-        // Re-adjusting to use bcrypt properly.
-
+        const isValid = await bcrypt.compare(input.password, user.passwordHash);
         if (!isValid) {
-            return Err(new Error("Identifiants incorrects"));
+            return Err(new Error("Mot de passe incorrect."));
         }
 
-        const sessionUser: SessionUser = {
-            id: user.id,
-            email: user.email,
-            role: user.role,
-            isActive: user.isActive,
-        };
+        const token = await this.generateToken(user);
+        const sessionUser = UserQueries.toSessionUser(user);
 
-        const token = await new SignJWT({ ...sessionUser })
-            .setProtectedHeader({ alg: "HS256" })
-            .setIssuedAt()
-            .setExpirationTime(`${SESSION_DURATION}s`)
-            .sign(JWT_SECRET);
-
-        return Ok({ user: sessionUser, token });
-    }
+        return Ok({ token, user: sessionUser });
+    },
 
     /**
-     * Register a new user
+     * Registers a new user with phone priority.
      */
-    static async register(input: RegisterInput): Promise<Result<{ user: SessionUser; token: string }>> {
-        const existing = await UserQueries.findByEmail(input.email);
+    async register(
+        input: RegisterServerInput
+    ): Promise<Result<{ token: string; user: SessionUser }>> {
+        const existing = await UserQueries.findByPhone(input.phone);
         if (existing) {
-            return Err(new Error("Cet email est déjà utilisé"));
+            return Err(new Error("Ce numéro de téléphone est déjà utilisé."));
         }
 
-        const passwordHash = await hash(input.password, 12);
+        const passwordHash = await bcrypt.hash(input.password, AUTH_CONFIG.SALT_ROUNDS);
 
-        const newUser = await UserQueries.create({
-            email: input.email,
-            phone: input.phone,
-            name: input.name,
-            role: UserRole.USER, // Default to USER
-            // @ts-ignore - passwordHash not in the public User type but internal
-            passwordHash,
-        });
+        try {
+            const user = await UserQueries.create({
+                phone: input.phone,
+                passwordHash,
+                email: input.email || undefined,
+                name: input.name || undefined,
+            });
 
-        const sessionUser: SessionUser = {
-            id: newUser.id,
-            email: newUser.email,
-            role: newUser.role,
-            isActive: newUser.isActive,
-        };
+            const token = await this.generateToken(user);
+            const sessionUser = UserQueries.toSessionUser(user);
 
-        const token = await new SignJWT({ ...sessionUser })
-            .setProtectedHeader({ alg: "HS256" })
-            .setIssuedAt()
-            .setExpirationTime(`${SESSION_DURATION}s`)
-            .sign(JWT_SECRET);
-
-        return Ok({ user: sessionUser, token });
-    }
+            return Ok({ token, user: sessionUser });
+        } catch (e) {
+            console.error("[AuthService] Registration error:", e);
+            return Err(new Error("Une erreur est survenue lors de l'inscription."));
+        }
+    },
 
     /**
-     * Get current session user from token
+     * Verifies the JWT and returns the payload.
      */
-    static async verifySession(token: string): Promise<Result<SessionUser>> {
+    async verifyToken(token: string): Promise<Result<AuthPayload>> {
         try {
-            const { payload } = await jwtVerify(token, JWT_SECRET);
-            return Ok(payload as unknown as SessionUser);
-        } catch (error) {
-            return Err(new Error("Session invalide ou expirée"));
+            const { payload } = await jwtVerify(token, secret);
+            return Ok(payload as unknown as AuthPayload);
+        } catch (e) {
+            return Err(e as Error);
         }
-    }
-}
+    },
+};

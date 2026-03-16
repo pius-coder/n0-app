@@ -1,194 +1,112 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { registerAction } from "@/server/actions/auth.actions";
-import { ROUTES } from "@/shared/constants/routes";
-import { useAuthStore } from "@/client/stores/auth.store";
+import { registerAction } from "@/server/actions";
 import { Button } from "@/client/components/ui/optics/button";
 import { Input } from "@/client/components/ui/optics/input";
-import { Label } from "@/client/components/ui/optics/label";
-import { Card } from "@/client/components/ui/optics/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/client/components/ui/optics/card";
 import { toast } from "sonner";
-import { User, AtSign, Phone, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { ROUTES } from "@/shared/constants";
 
 export function RegisterForm() {
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        password: "",
-        confirmPassword: "",
-    });
-    const [isPending, setIsPending] = useState(false);
-
     const router = useRouter();
-    const setUser = useAuthStore((s) => s.setUser);
+    const [state, formAction, isPending] = useActionState(registerAction, null);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData(prev => ({ ...prev, [e.target.id]: e.target.value }));
-    };
-
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-
-        if (formData.password !== formData.confirmPassword) {
-            toast.error("Les mots de passe ne correspondent pas");
-            return;
+    useEffect(() => {
+        if (state?.success) {
+            toast.success("Compte créé avec succès");
+            router.push(ROUTES.DASHBOARD);
+            router.refresh();
         }
-
-        setIsPending(true);
-
-        try {
-            const result = await registerAction(formData);
-
-            if (result.error) {
-                toast.error(result.error);
-            } else if (result.data) {
-                setUser(result.data);
-                toast.success("Compte créé avec succès");
-                router.push(ROUTES.dashboard.home);
-                router.refresh();
-            }
-        } catch (error) {
-            toast.error("Une erreur est survenue");
-        } finally {
-            setIsPending(false);
-        }
-    }
+    }, [state, router]);
 
     return (
-        <Card className="w-full max-w-md p-8 border-brand-border bg-brand-surface/50 backdrop-blur-xl shadow-card overflow-hidden relative">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-green via-brand-cyan to-brand-blue" />
-
-            <div className="mb-8 text-center">
-                <h1 className="text-2xl font-bold text-brand-text mb-2 tracking-tight">Bienvenue sur _n0</h1>
-                <p className="text-sm text-brand-muted">Rejoignez la révolution de l'identité virtuelle</p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+        <Card className="w-full max-w-md mx-auto border-neutral-200/50 shadow-xl bg-white/50 backdrop-blur-sm">
+            <CardHeader>
+                <CardTitle className="text-2xl font-bold text-center bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent">
+                    Inscription
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+                <form action={formAction} className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="name" className="text-xs font-semibold uppercase tracking-wider text-brand-muted ml-1">
-                            Nom
-                        </Label>
-                        <div className="relative">
-                            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-hint" />
+                        <label className="text-sm font-semibold text-neutral-700 ml-1">Nom complet (optionnel)</label>
+                        <Input
+                            name="name"
+                            placeholder="John Doe"
+                            className="bg-white/80"
+                            disabled={isPending}
+                        />
+                        {state?.error?.name && (
+                            <p className="text-xs text-destructive font-medium mt-1 ml-1">{state.error.name[0]}</p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-neutral-700 ml-1">Téléphone</label>
+                        <Input
+                            name="phone"
+                            placeholder="+221..."
+                            className="bg-white/80"
+                            disabled={isPending}
+                        />
+                        {state?.error?.phone && (
+                            <p className="text-xs text-destructive font-medium mt-1 ml-1">{state.error.phone[0]}</p>
+                        )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-neutral-700 ml-1">Mot de passe</label>
                             <Input
-                                id="name"
-                                placeholder="Jean"
-                                value={formData.name}
-                                onChange={handleChange}
-                                required
-                                className="pl-10 bg-brand-bg/50 border-brand-border"
-                                variant={undefined}
+                                name="password"
+                                type="password"
+                                placeholder="••••••"
+                                className="bg-white/80"
+                                disabled={isPending}
                             />
+                            {state?.error?.password && (
+                                <p className="text-xs text-destructive font-medium mt-1 ml-1">{state.error.password[0]}</p>
+                            )}
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-neutral-700 ml-1">Confirmation</label>
+                            <Input
+                                name="confirmPassword"
+                                type="password"
+                                placeholder="••••••"
+                                className="bg-white/80"
+                                disabled={isPending}
+                            />
+                            {state?.error?.confirmPassword && (
+                                <p className="text-xs text-destructive font-medium mt-1 ml-1">{state.error.confirmPassword[0]}</p>
+                            )}
                         </div>
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="phone" className="text-xs font-semibold uppercase tracking-wider text-brand-muted ml-1">
-                            Téléphone
-                        </Label>
-                        <div className="relative">
-                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-hint" />
-                            <Input
-                                id="phone"
-                                placeholder="+225..."
-                                value={formData.phone}
-                                onChange={handleChange}
-                                required
-                                className="pl-10 bg-brand-bg/50 border-brand-border"
-                                variant={undefined}
-                            />
+
+                    {state?.serverError && (
+                        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                            <p className="text-sm text-center text-destructive font-medium">{state.serverError}</p>
                         </div>
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wider text-brand-muted ml-1">
-                        Email
-                    </Label>
-                    <div className="relative">
-                        <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-hint" />
-                        <Input
-                            id="email"
-                            type="email"
-                            placeholder="votre@email.com"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                            className="pl-10 bg-brand-bg/50 border-brand-border"
-                            variant={undefined}
-                        />
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="password" title="Mot de passe" className="text-xs font-semibold uppercase tracking-wider text-brand-muted ml-1">
-                        Mot de passe
-                    </Label>
-                    <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-hint" />
-                        <Input
-                            id="password"
-                            type="password"
-                            placeholder="••••••••"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                            className="pl-10 bg-brand-bg/50 border-brand-border"
-                            variant={undefined}
-                        />
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="confirmPassword" title="Confirmer le mot de passe" className="text-xs font-semibold uppercase tracking-wider text-brand-muted ml-1">
-                        Confirmer
-                    </Label>
-                    <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-hint" />
-                        <Input
-                            id="confirmPassword"
-                            type="password"
-                            placeholder="••••••••"
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            required
-                            className="pl-10 bg-brand-bg/50 border-brand-border"
-                            variant={undefined}
-                        />
-                    </div>
-                </div>
-
-                <Button
-                    type="submit"
-                    disabled={isPending}
-                    className="w-full h-11 bg-brand-text text-white hover:bg-neutral-800 rounded-xl font-bold transition-all active:scale-[0.98] group mt-2"
-                >
-                    {isPending ? (
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                    ) : (
-                        <>
-                            Créer mon compte
-                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                        </>
                     )}
-                </Button>
-            </form>
 
-            <div className="mt-8 text-center border-t border-brand-border pt-6">
-                <p className="text-sm text-brand-muted">
-                    Déjà un compte ?{" "}
-                    <Link
-                        href={ROUTES.auth.login}
-                        className="font-bold text-brand-text hover:text-brand-indigo transition-colors"
+                    <Button
+                        className="w-full h-11 text-base font-semibold mt-4 transition-all hover:scale-[1.02]"
+                        disabled={isPending}
+                        type="submit"
                     >
-                        Se connecter
-                    </Link>
-                </p>
-            </div>
+                        {isPending ? "Création..." : "Créer mon compte"}
+                    </Button>
+
+                    <p className="text-center text-sm text-neutral-500">
+                        Déjà un compte ?{" "}
+                        <a href={ROUTES.LOGIN} className="text-neutral-900 font-semibold hover:underline">
+                            Se connecter
+                        </a>
+                    </p>
+                </form>
+            </CardContent>
         </Card>
     );
 }

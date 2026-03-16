@@ -1,69 +1,58 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { AuthService } from "@/server/services/auth.service";
-import { loginSchema, registerSchema, type LoginInput, type RegisterInput } from "@/shared/schemas";
-import { AUTH_COOKIE_NAME, SESSION_DURATION } from "@/shared/constants/auth.constants";
+import { redirect } from "next/navigation";
+import { AuthService } from "@/server/services";
+import { loginSchema, registerServerSchema } from "@/shared/schemas";
+import { AUTH_CONFIG } from "@/shared/constants";
 
-/**
- * Handle user login
- */
-export async function loginAction(input: LoginInput) {
-    const result = loginSchema.safeParse(input);
-    if (!result.success) {
-        return { error: "Données invalides" };
+export async function loginAction(_prevState: any, formData: FormData) {
+    const raw = Object.fromEntries(formData);
+    const parsed = loginSchema.safeParse(raw);
+
+    if (!parsed.success) {
+        return { error: parsed.error.flatten().fieldErrors };
     }
 
-    const authResult = await AuthService.login(result.data);
-
-    if (!authResult.ok) {
-        return { error: authResult.error.message };
+    const result = await AuthService.login(parsed.data);
+    if (!result.ok) {
+        return { serverError: result.error.message };
     }
 
-    const cookieStore = await cookies();
-    cookieStore.set(AUTH_COOKIE_NAME, authResult.data.token, {
+    (await cookies()).set(AUTH_CONFIG.TOKEN_NAME, result.data.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        maxAge: AUTH_CONFIG.COOKIE_TTL,
         sameSite: "lax",
-        path: "/",
-        maxAge: SESSION_DURATION,
     });
 
-    return { data: authResult.data.user };
-}
-
-/**
- * Handle user registration
- */
-export async function registerAction(input: RegisterInput) {
-    const result = registerSchema.safeParse(input);
-    if (!result.success) {
-        return { error: "Données invalides" };
-    }
-
-    const authResult = await AuthService.register(result.data);
-
-    if (!authResult.ok) {
-        return { error: authResult.error.message };
-    }
-
-    const cookieStore = await cookies();
-    cookieStore.set(AUTH_COOKIE_NAME, authResult.data.token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-        maxAge: SESSION_DURATION,
-    });
-
-    return { data: authResult.data.user };
-}
-
-/**
- * Handle user logout
- */
-export async function logoutAction() {
-    const cookieStore = await cookies();
-    cookieStore.delete(AUTH_COOKIE_NAME);
     return { success: true };
+}
+
+export async function registerAction(_prevState: any, formData: FormData) {
+    const raw = Object.fromEntries(formData);
+    const parsed = registerServerSchema.safeParse(raw);
+
+    if (!parsed.success) {
+        return { error: parsed.error.flatten().fieldErrors };
+    }
+
+    const result = await AuthService.register(parsed.data);
+    if (!result.ok) {
+        return { serverError: result.error.message };
+    }
+
+    (await cookies()).set(AUTH_CONFIG.TOKEN_NAME, result.data.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: AUTH_CONFIG.COOKIE_TTL,
+        sameSite: "lax",
+    });
+
+    return { success: true };
+}
+
+export async function logoutAction() {
+    (await cookies()).delete(AUTH_CONFIG.TOKEN_NAME);
+    redirect("/login");
 }

@@ -1,23 +1,21 @@
 generator client {
-  provider        = "prisma-client-js"
-  output          = "../src/generated/prisma"
-  previewFeatures = ["adapterPg"]
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
   id           String   @id @default(cuid())
-  email        String   @unique
-  phone        String?  @unique
+  phone        String   @unique
+  email        String?  @unique
   name         String?
   avatarUrl    String?  @map("avatar_url")
   passwordHash String   @map("password_hash")
   role         Role     @default(USER)
-  balanceFcfa  Int      @default(0) @map("balance_fcfa")
+  credits      Int      @default(0)
   isActive     Boolean  @default(true) @map("is_active")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
@@ -34,7 +32,7 @@ model Order {
   numberId    String?     @map("number_id")
   phoneNumber String?     @map("phone_number")
   smsCode     String?     @map("sms_code")
-  priceFcfa   Int         @map("price_fcfa")
+  price       Int         @map("price_credits")
   status      OrderStatus @default(PENDING)
   expiresAt   DateTime    @map("expires_at")
   createdAt   DateTime    @default(now()) @map("created_at")
@@ -46,13 +44,13 @@ model Order {
 }
 
 model Transaction {
-  id         String   @id @default(cuid())
-  userId     String   @map("user_id")
-  amountFcfa Int      @map("amount_fcfa")
-  type       TxType
-  status     TxStatus @default(COMPLETED)
-  metadata   Json?
-  createdAt  DateTime @default(now()) @map("created_at")
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  amount    Int      @map("amount_credits")
+  type      TxType
+  status    TxStatus @default(COMPLETED)
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id])
 

@@ -1,13 +1,12 @@
-"use client";
-
+import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/client/components/ui/optics/badge";
 import { Button } from "@/client/components/ui/optics/button";
 import { Star, CheckCircle2 } from "lucide-react";
+import { ROUTES } from "@/shared/constants";
+import { useAuth } from "@/client/hooks/features/auth/use-auth";
 
-interface LandingHeroProps {
-    onJoinWaitlist: () => void;
-}
+interface LandingHeroProps { }
 
 const flags = [
     { icon: "twemoji:flag-france", name: "France" },
@@ -17,7 +16,9 @@ const flags = [
     { icon: "twemoji:flag-cameroon", name: "Cameroun" },
 ];
 
-export function LandingHero({ onJoinWaitlist }: LandingHeroProps) {
+export function LandingHero({ }: LandingHeroProps) {
+    const { isAuthenticated, isLoading } = useAuth();
+
     return (
         <section className="relative pt-8 md:pt-16 pb-12 w-full max-w-7xl mx-auto px-4 sm:px-6 z-10">
             <div className="flex flex-col lg:flex-row lg:items-center gap-10 md:gap-16 justify-between">
@@ -40,13 +41,16 @@ export function LandingHero({ onJoinWaitlist }: LandingHeroProps) {
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
-                        <Button
-                            onClick={onJoinWaitlist}
-                            size="lg"
-                            className="w-full sm:w-auto rounded-full px-10 py-7 md:px-12 md:py-9 text-lg md:text-xl font-bold shadow-xl shadow-primary/20 active:scale-95 transition-transform bg-primary hover:bg-primary/90 text-primary-foreground"
-                        >
-                            Acheter un numéro
-                        </Button>
+                        {!isLoading && (
+                            <Link href={isAuthenticated ? ROUTES.DASHBOARD : ROUTES.REGISTER}>
+                                <Button
+                                    size="lg"
+                                    className="w-full sm:w-auto rounded-full px-10 py-7 md:px-12 md:py-9 text-lg md:text-xl font-bold shadow-xl shadow-primary/20 active:scale-95 transition-transform bg-primary hover:bg-primary/90 text-primary-foreground"
+                                >
+                                    {isAuthenticated ? "Accéder à mon espace" : "Acheter un numéro"}
+                                </Button>
+                            </Link>
+                        )}
                         <div className="flex items-center gap-3">
                             <div className="flex -space-x-2.5">
                                 {flags.map((flag, i) => (

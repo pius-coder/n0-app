@@ -1,11 +1,14 @@
 import { RegisterForm } from "@/client/components/features/auth";
-import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "_n0 — Inscription",
-  description: "Rejoignez _n0 dès aujourd'hui",
+export const metadata = {
+  title: "Inscription - _n0",
+  description: "Créez un compte _n0 pour acheter des numéros virtuels.",
 };
 
 export default function RegisterPage() {
-  return <RegisterForm />;
+  return (
+    <div className="min-h-[80vh] flex items-center justify-center px-4">
+      <RegisterForm />
+    </div>
+  );
 }

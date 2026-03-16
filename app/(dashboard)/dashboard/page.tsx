@@ -1,6 +1,9 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { UserHomeService } from "@/server/services";
+import { getIdentity } from "@/server/helpers";
+import { ROUTES } from "@/shared/constants";
 import {
   UserHomeHeader,
   UserHomeView,
@@ -12,9 +15,14 @@ export const metadata: Metadata = {
   description: "Gérez vos numéros virtuels et services",
 };
 
-// TODO: Replace "demo-user" with real session userId
 async function UserHomeContent() {
-  const result = await UserHomeService.getPageData("demo-user");
+  const identity = await getIdentity();
+
+  if (!identity) {
+    redirect(ROUTES.LOGIN);
+  }
+
+  const result = await UserHomeService.getPageData(identity.userId);
 
   if (!result.ok) {
     return (

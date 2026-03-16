@@ -1,4 +1,4 @@
-export type { User, UserPreview, SessionUser } from "./user.types";
+export type { User, SessionUser, AuthPayload } from "./user.types";
 export type {
   PhoneNumber,
   NumberPreview,

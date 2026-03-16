@@ -5,6 +5,9 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/client/lib/utils";
 import { AppLogo } from "@/client/components/common/app-logo";
 import { ROUTES } from "@/shared/constants/routes";
+import { useAuth } from "@/client/hooks/features/auth/use-auth";
+import { logoutAction } from "@/server/actions/auth.actions";
+import { LogOut, ShieldCheck, HelpCircle } from "lucide-react";
 
 type SidebarItem = {
     label: string;
@@ -56,6 +59,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
 
 export function DesktopSidebar() {
     const pathname = usePathname();
+    const { user, isAdmin } = useAuth();
 
     return (
         <aside className="hidden lg:flex w-64 flex-col fixed inset-y-0 bg-brand-bg border-r border-brand-border h-screen">
@@ -84,14 +88,51 @@ export function DesktopSidebar() {
                         </Link>
                     );
                 })}
+
+                {isAdmin && (
+                    <Link
+                        href={ROUTES.ADMIN}
+                        className={cn(
+                            "flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-sans text-sm font-medium",
+                            pathname.startsWith(ROUTES.ADMIN)
+                                ? "bg-amber-500/10 text-amber-600 shadow-sm"
+                                : "text-brand-text/50 hover:bg-amber-500/5 hover:text-amber-600"
+                        )}
+                    >
+                        <ShieldCheck className="size-5" />
+                        Administration
+                    </Link>
+                )}
             </nav>
 
-            <div className="p-4 mt-auto">
+            <div className="p-4 space-y-4">
+                {/* User Profile Summary */}
+                {user && (
+                    <div className="px-4 py-3 rounded-2xl bg-brand-surface border border-brand-border/40 flex items-center gap-3">
+                        <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold ring-2 ring-primary/5">
+                            {user.name?.[0] || user.phone?.[0]}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-[13px] font-bold text-brand-text truncate">{user.name || "Utilisateur"}</p>
+                            <p className="text-[10px] text-brand-text/40 font-medium truncate">{user.phone}</p>
+                        </div>
+                    </div>
+                )}
+
                 <div className="rounded-2xl bg-brand-surface p-4 border border-brand-border/40">
-                    <p className="text-xs font-medium text-brand-text/40 mb-3">Besoin d'aide ?</p>
-                    <button className="w-full py-2 bg-brand-surface2 text-brand-text text-[13px] font-bold rounded-xl transition-all active:scale-95">
+                    <p className="text-xs font-medium text-brand-text/40 mb-3 flex items-center gap-2">
+                        <HelpCircle className="size-3" /> Besoin d'aide ?
+                    </p>
+                    <button className="w-full py-2.5 bg-brand-surface2 text-brand-text text-[13px] font-bold rounded-xl transition-all active:scale-95 border border-brand-border/20 shadow-sm">
                         Support Client
                     </button>
+
+                    <form action={logoutAction} className="mt-3">
+                        <button className="w-full py-2 text-red-500/70 hover:text-red-500 text-[12px] font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+                            <LogOut className="size-4" />
+                            Déconnexion
+                        </button>
+                    </form>
                 </div>
             </div>
         </aside>

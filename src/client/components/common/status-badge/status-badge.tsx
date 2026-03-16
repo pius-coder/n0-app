@@ -6,10 +6,10 @@ type StatusBadgeProps = {
   status: NumberStatus;
 };
 
-const VARIANT_MAP: Record<string, "green" | "yellow" | "red" | "default"> = {
-  available: "green",
-  reserved: "yellow",
-  sold: "red",
+const VARIANT_MAP: Record<NumberStatus, "success" | "warning" | "error" | "default"> = {
+  available: "success",
+  reserved: "warning",
+  sold: "error",
   suspended: "default",
 };
 

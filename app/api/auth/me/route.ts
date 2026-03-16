@@ -1,29 +1,25 @@
-import { cookies } from "next/headers";
-import { AuthService } from "@/server/services/auth.service";
-import { success, error } from "@/server/helpers/api-response.helper";
-import { UnauthorizedError } from "@/server/errors";
-import { AUTH_COOKIE_NAME } from "@/shared/constants/auth.constants";
+import { NextRequest } from "next/server";
+import { UserQueries } from "@/server/db/queries/user.queries";
+import { AuthService } from "@/server/services";
+import { success, error } from "@/server/helpers";
+import { AUTH_CONFIG } from "@/shared/constants";
 
-export async function GET() {
-    try {
-        const cookieStore = await cookies();
-        const token = cookieStore.get(AUTH_COOKIE_NAME)?.value;
+export async function GET(req: NextRequest) {
+    const token = req.cookies.get(AUTH_CONFIG.TOKEN_NAME)?.value;
 
-        if (!token) {
-            throw new UnauthorizedError("Session expirée");
-        }
-
-        const result = await AuthService.verifySession(token);
-
-        if (!result.ok) {
-            // Clear invalid cookie
-            const res = error(new UnauthorizedError(result.error.message));
-            res.cookies.delete(AUTH_COOKIE_NAME);
-            return res;
-        }
-
-        return success(result.data);
-    } catch (err) {
-        return error(err);
+    if (!token) {
+        return error({ message: "Non authentifié", statusCode: 401 });
     }
+
+    const result = await AuthService.verifyToken(token);
+    if (!result.ok) {
+        return error({ message: "Session expirée", statusCode: 401 });
+    }
+
+    const user = await UserQueries.findById(result.data.sub);
+    if (!user || !user.isActive) {
+        return error({ message: "Utilisateur introuvable ou inactif", statusCode: 401 });
+    }
+
+    return success(UserQueries.toSessionUser(user));
 }

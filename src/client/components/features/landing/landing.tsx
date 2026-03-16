@@ -15,19 +15,19 @@ import { WaitlistModal } from "./waitlist-modal";
 import { PromoBanner } from "./promo-banner";
 
 export function Landing() {
-    const [isModalOpen, setIsModalOpen] = React.useState(false);
+    // const [isModalOpen, setIsModalOpen] = React.useState(false);
 
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+    // const openModal = () => setIsModalOpen(true);
+    // const closeModal = () => setIsModalOpen(false);
 
     return (
         <div className="antialiased min-h-screen flex flex-col items-center selection:bg-primary/20 selection:text-primary text-foreground bg-background/30 font-sans overflow-x-hidden">
             <PromoBanner />
             {/* <LandingBackground /> */}
-            <LandingNavbar onJoinWaitlist={openModal} />
+            <LandingNavbar />
 
             <main className="w-full max-w-7xl pt-8 pb-16 px-4 md:px-6 space-y-24 md:space-y-48 mx-auto">
-                <LandingHero onJoinWaitlist={openModal} />
+                <LandingHero />
 
                 <div className="-mx-4 md:-mx-6">
                     <LandingLogos />
@@ -43,15 +43,15 @@ export function Landing() {
 
                 <LandingFAQ />
 
-                <LandingCTA onJoinWaitlist={openModal} />
+                <LandingCTA />
             </main>
 
             <LandingFooter />
 
-            <WaitlistModal
+            {/* <WaitlistModal
                 isOpen={isModalOpen}
                 onClose={closeModal}
-            />
+            /> */}
         </div>
     );
 }

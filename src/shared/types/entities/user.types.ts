@@ -1,17 +1,24 @@
-import { UserRole } from "../../enums/user.enum";
+import { UserRole } from "@/shared/enums";
 
 export type User = {
   id: string;
-  email: string;
-  phone: string | null;
+  phone: string;
+  email?: string | null;
+  name?: string | null;
+  avatarUrl?: string | null;
+  passwordHash: string;
   role: UserRole;
-  balanceFcfa: number;
+  credits: number;
   isActive: boolean;
-  name: string | null;
-  avatarUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
 
-export type UserPreview = Pick<User, "id" | "email" | "name" | "role" | "balanceFcfa">;
-export type SessionUser = Pick<User, "id" | "email" | "role" | "isActive">;
+// Minimal payload for JWT security (P0)
+export type AuthPayload = {
+  sub: string; // userId
+  role: UserRole;
+};
+
+// SessionUser for hooks/stores (excludes sensitive hash)
+export type SessionUser = Pick<User, "id" | "phone" | "role" | "credits" | "name">;

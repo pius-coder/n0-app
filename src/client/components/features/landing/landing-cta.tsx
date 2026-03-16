@@ -1,12 +1,10 @@
-"use client";
-
+import Link from "next/link";
 import { Button } from "@/client/components/ui/optics/button";
+import { ROUTES } from "@/shared/constants";
 
-interface LandingCTAProps {
-    onJoinWaitlist: () => void;
-}
+interface LandingCTAProps { }
 
-export function LandingCTA({ onJoinWaitlist }: LandingCTAProps) {
+export function LandingCTA({ }: LandingCTAProps) {
     return (
         <section className="text-center py-12 space-y-8 bg-muted/50 rounded-[3rem] px-6 border border-border">
             <div className="space-y-4">
@@ -21,13 +19,14 @@ export function LandingCTA({ onJoinWaitlist }: LandingCTAProps) {
                 </p>
             </div>
             <div className="flex flex-col items-center gap-4">
-                <Button
-                    onClick={onJoinWaitlist}
-                    size="lg"
-                    className="rounded-full px-16 py-8 text-xl font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all text-primary-foreground bg-primary"
-                >
-                    Créer un compte [Gratuit]
-                </Button>
+                <Link href={ROUTES.REGISTER}>
+                    <Button
+                        size="lg"
+                        className="rounded-full px-16 py-8 text-xl font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all text-primary-foreground bg-primary"
+                    >
+                        Créer un compte [Gratuit]
+                    </Button>
+                </Link>
                 <p className="text-sm text-muted-foreground font-semibold">Recharge Mobile Money supportée</p>
             </div>
         </section>

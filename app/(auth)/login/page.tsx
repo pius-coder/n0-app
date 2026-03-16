@@ -1,11 +1,14 @@
 import { LoginForm } from "@/client/components/features/auth";
-import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "_n0 — Connexion",
-  description: "Accédez à votre compte _n0",
+export const metadata = {
+  title: "Connexion - _n0",
+  description: "Connectez-vous à votre compte _n0 pour gérer vos numéros.",
 };
 
 export default function LoginPage() {
-  return <LoginForm />;
+  return (
+    <div className="min-h-[80vh] flex items-center justify-center px-4">
+      <LoginForm />
+    </div>
+  );
 }
