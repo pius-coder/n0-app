@@ -14,6 +14,7 @@ export type {
   UserHomeData,
   ServiceIconKey,
   NavId,
+  SessionUser,
 } from "./entities";
 
 export type {

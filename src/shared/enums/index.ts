@@ -5,3 +5,4 @@ export { OrderStatus } from "./order-status.enum";
 export type { OrderStatus as OrderStatusType } from "./order-status.enum";
 
 export { ServiceStatus, ServerStatus } from "./service-status.enum";
+export { UserRole } from "./user.enum";

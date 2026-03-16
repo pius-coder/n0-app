@@ -1,17 +1,11 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/client/components/ui";
+import { LoginForm } from "@/client/components/features/auth";
+import type { Metadata } from "next";
 
-export const metadata = { title: "Connexion" };
+export const metadata: Metadata = {
+  title: "_n0 — Connexion",
+  description: "Accédez à votre compte _n0",
+};
 
 export default function LoginPage() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Connexion</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {/* TODO: <LoginForm /> */}
-        <p className="text-sm text-neutral-500">Login form coming soon...</p>
-      </CardContent>
-    </Card>
-  );
+  return <LoginForm />;
 }

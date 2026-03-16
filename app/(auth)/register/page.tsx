@@ -1,17 +1,11 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/client/components/ui";
+import { RegisterForm } from "@/client/components/features/auth";
+import type { Metadata } from "next";
 
-export const metadata = { title: "Inscription" };
+export const metadata: Metadata = {
+  title: "_n0 — Inscription",
+  description: "Rejoignez _n0 dès aujourd'hui",
+};
 
 export default function RegisterPage() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Inscription</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {/* TODO: <RegisterForm /> */}
-        <p className="text-sm text-neutral-500">Register form coming soon...</p>
-      </CardContent>
-    </Card>
-  );
+  return <RegisterForm />;
 }
