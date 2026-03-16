@@ -9,13 +9,14 @@ export const ROUTES = {
   },
 
   dashboard: {
-    root: "/dashboard",
-    home: "/dashboard",
+    root: "/",
+    home: "/app",
     numbers: "/numbers",
     number: (id: string) => `/numbers/${id}` as const,
     orders: "/orders",
     order: (id: string) => `/orders/${id}` as const,
     settings: "/settings",
+    account: "/account"
   },
 
   api: {

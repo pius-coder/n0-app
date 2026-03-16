@@ -21,7 +21,7 @@ export function Landing() {
     const closeModal = () => setIsModalOpen(false);
 
     return (
-        <div className="antialiased min-h-screen flex flex-col items-center selection:bg-primary/20 selection:text-primary text-foreground bg-background font-sans overflow-x-hidden">
+        <div className="antialiased min-h-screen flex flex-col items-center selection:bg-primary/20 selection:text-primary text-foreground bg-background/30 font-sans overflow-x-hidden">
             <PromoBanner />
             {/* <LandingBackground /> */}
             <LandingNavbar onJoinWaitlist={openModal} />

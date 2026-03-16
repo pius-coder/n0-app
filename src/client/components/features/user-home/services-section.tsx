@@ -10,17 +10,17 @@ export function ServicesSection({ services, onServicePress }: ServicesSectionPro
   return (
     <section>
       {/* Section header */}
-      <div className="mb-3 flex items-center justify-between px-1">
-        <h2 className="font-display text-[11px] font-semibold uppercase tracking-widest text-brand-hint">
+      <div className="mb-2 flex items-center justify-between px-1">
+        <h2 className="font-sans text-[13px] font-medium text-brand-text/40 tracking-tight">
           Services
         </h2>
-        <button className="border-b border-brand-border pb-px text-[12.5px] font-medium text-brand-muted transition-colors hover:text-brand-text">
+        <button className="text-[12px] font-medium text-brand-muted/70 transition-colors hover:text-brand-text">
           Voir tout
         </button>
       </div>
 
       {/* Services list card */}
-      <div className="overflow-hidden rounded-4xl bg-brand-surface shadow-card">
+      <div className="overflow-hidden rounded-3xl bg-brand-surface shadow-card">
         {services.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 px-4 py-12 text-center">
             <p className="text-sm font-medium text-brand-muted">

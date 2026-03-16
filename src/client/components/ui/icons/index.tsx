@@ -65,3 +65,68 @@ export function ChevronRightIcon({ className, size = 16 }: IconProps) {
     </svg>
   );
 }
+
+export function TrendingUpIcon({ className, size = 20 }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M22 7l-8.5 8.5-5-5L2 17" />
+      <path d="M16 7h6v6" />
+    </svg>
+  );
+}
+
+export function TrendingDownIcon({ className, size = 20 }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M22 17l-8.5-8.5-5 5L2 7" />
+      <path d="M16 17h6v-6" />
+    </svg>
+  );
+}
+
+export function CoinIcon({ className, size = 24 }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.1" />
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+      <text
+        x="12"
+        y="13"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fill="currentColor"
+        fontSize="12"
+        fontWeight="bold"
+        className="font-sans"
+      >
+        c
+      </text>
+    </svg>
+  );
+}

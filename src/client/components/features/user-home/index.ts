@@ -10,3 +10,4 @@ export { ServerCardToggle } from "./server-card-toggle";
 export { ServerInfo } from "./server-info";
 export { ServerSelector } from "./server-selector";
 export { ServerCardHeader } from "./server-card-header";
+export { CurrencyFormatter } from "./currency-formatter";

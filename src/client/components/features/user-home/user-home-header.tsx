@@ -3,7 +3,7 @@ import { MenuIcon } from "@/client/components/ui/icons";
 
 export function UserHomeHeader() {
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between bg-brand-bg px-5 pb-3 pt-5">
+    <header className="sticky top-0 z-10 flex items-center justify-between bg-brand-bg px-5 pb-3 pt-5 lg:hidden">
       {/* Logo */}
       <AppLogo />
 

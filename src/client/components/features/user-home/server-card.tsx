@@ -60,7 +60,7 @@ export function ServerCard({ server, onRecharge, onViewNumbers }: ServerCardProp
   ];
 
   return (
-    <div className="w-full rounded-4xl bg-brand-surface p-2 shadow-card overflow-hidden transition-all duration-300">
+    <div className="w-full rounded-3xl bg-brand-surface p-1.5 shadow-card overflow-hidden transition-all duration-300">
       {/* Header View */}
       <ServerCardHeader
         currentServer={currentWithAvatar}
@@ -77,7 +77,7 @@ export function ServerCard({ server, onRecharge, onViewNumbers }: ServerCardProp
           pointerEvents: isSelectorOpen ? "auto" : "none"
         }}
       >
-        <div className="mx-8 h-px bg-brand-border/40" />
+        <div className="mx-6 h-px bg-brand-border/30" />
         <ServerSelector
           servers={allServers}
           currentServerId={currentWithAvatar.id}
@@ -89,16 +89,16 @@ export function ServerCard({ server, onRecharge, onViewNumbers }: ServerCardProp
       </div>
 
       {/* Divider (Main) */}
-      <div className={cn("mx-4 h-px bg-brand-border transition-all duration-300", isSelectorOpen ? "opacity-20 translate-y-2" : "opacity-100")} />
+      <div className={cn("mx-4 h-px bg-brand-border transition-all duration-300", isSelectorOpen ? "opacity-10 translate-y-2" : "opacity-100")} />
 
       {/* Actions */}
-      <div className="flex gap-4 p-5">
+      <div className="flex gap-3 p-1.5">
         <Button
           variant="default"
           onClick={onRecharge}
-          className="h-auto flex-1 rounded-2xl py-5 font-display text-lg font-bold tracking-tight shadow-md! transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="h-auto flex-1 rounded-2xl py-4 font-sans text-base font-bold tracking-tight shadow-md! transition-all hover:scale-[1.01] active:scale-95"
         >
-          <svg width="24" height="24" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
             <rect x="1" y="1" width="14" height="14" rx="3.5" />
             <line x1="8" y1="4.5" x2="8" y2="11.5" />
             <line x1="4.5" y1="8" x2="11.5" y2="8" />
@@ -107,15 +107,10 @@ export function ServerCard({ server, onRecharge, onViewNumbers }: ServerCardProp
         </Button>
 
         <Button
-          variant="secondary"
+          variant="outline"
           onClick={onViewNumbers}
-          className="h-auto flex-1 rounded-2xl border-none! bg-brand-surface2 py-5 font-body text-lg font-semibold text-brand-text shadow-none! transition-all hover:bg-brand-surface2/80 hover:scale-[1.02] active:scale-[0.98]"
+          className="h-auto flex-1 rounded-2xl border-none! bg-brand-surface2 py-4 font-sans text-base font-semibold text-brand-text shadow-none! transition-all hover:bg-brand-surface2/80 hover:scale-[1.01] active:scale-95"
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-            <polyline points="15 3 21 3 21 9" />
-            <line x1="10" y1="14" x2="21" y2="3" />
-          </svg>
           Mes Numéros
         </Button>
       </div>

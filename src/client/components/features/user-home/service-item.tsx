@@ -1,6 +1,7 @@
 import type { UserService } from "@/shared/types";
 import { ServiceStatus } from "@/shared/enums";
 import { ServiceIcon } from "./service-icons";
+import { cn } from "@/client/lib/utils";
 
 type ServiceItemProps = {
   service: UserService;
@@ -28,26 +29,26 @@ export function ServiceItem({ service, onPress, isLast = false }: ServiceItemPro
 
       {/* Text */}
       <div className="flex-1 min-w-0">
-        <p className="font-display text-[15px] font-bold tracking-tight text-brand-text">
+        <p className="font-sans text-[15px] font-bold text-brand-text">
           {service.name}
         </p>
-        <p className="mt-0.5 text-xs text-brand-hint">
+        <p className="text-[12px] text-brand-text/40">
           {service.subtitle}
         </p>
       </div>
 
-      {/* Status + chevron */}
-      <div className="flex shrink-0 flex-col items-end gap-1">
+      {/* Status + badge */}
+      <div className="flex shrink-0 items-center gap-2">
         <div
-          className={[
-            "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold",
+          className={cn(
+            "flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-bold",
             isActive
-              ? "bg-brand-green-bg text-brand-green-text"
-              : "bg-gray-100 text-gray-500",
-          ].join(" ")}
+              ? "bg-brand-green-bg text-brand-green"
+              : "bg-gray-100/50 text-gray-400"
+          )}
         >
           {isActive && (
-            <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-brand-green" />
+            <span className="h-1 w-1 rounded-full bg-brand-green shadow-[0_0_4px_rgba(16,185,129,0.5)]" />
           )}
           {isActive ? "Actif" : service.status}
         </div>

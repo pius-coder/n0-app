@@ -27,18 +27,28 @@ export function UserHomeView({ initialData }: UserHomeViewProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4 px-5 pb-6">
-      <BalanceCard balance={initialData.balance} />
+    <div className="flex flex-col gap-6 lg:grid lg:grid-cols-12 lg:gap-8 px-5 pb-6">
+      {/* 1. Main Content Area */}
+      <div className="flex flex-col gap-6 lg:col-span-8">
+        <BalanceCard
+          balance={initialData.balance}
+          className="lg:bg-brand-surface lg:rounded-3xl lg:shadow-sm"
+        />
 
-      <ServerCard
-        server={initialData.server}
-        onRecharge={handleRecharge}
-        onViewNumbers={handleViewNumbers}
-      />
-      <ServicesSection
-        services={initialData.services}
-        onServicePress={handleServicePress}
-      />
+        <ServerCard
+          server={initialData.server}
+          onRecharge={handleRecharge}
+          onViewNumbers={handleViewNumbers}
+        />
+      </div>
+
+      {/* 2. Sidebar Area */}
+      <div className="lg:col-span-4">
+        <ServicesSection
+          services={initialData.services}
+          onServicePress={handleServicePress}
+        />
+      </div>
     </div>
   );
 }

@@ -1,11 +1,11 @@
-import { Geist, Geist_Mono, Manrope, Fraunces, Syne, DM_Sans, DM_Mono } from "next/font/google";
+import { Inter, Geist_Mono, Manrope, Fraunces, Syne, DM_Sans, DM_Mono } from "next/font/google";
 import { cn } from "@/client/lib/utils";
 import { APP_CONFIG } from "@/shared/constants";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
 const fraunces = Fraunces({
@@ -49,8 +49,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" suppressHydrationWarning className={cn("font-sans", geist.variable, geistMono.variable, manrope.variable, fraunces.variable, syne.variable, dmSans.variable, dmMono.variable)}>
-      <body className="min-h-screen bg-background text-foreground antialiased font-manrope">
+    <html lang="fr" suppressHydrationWarning className={cn("font-sans", inter.variable, geistMono.variable, manrope.variable, fraunces.variable, syne.variable, dmSans.variable, dmMono.variable)}>
+      <body className="min-h-screen bg-background text-foreground antialiased font-sans">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
