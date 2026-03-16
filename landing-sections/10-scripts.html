@@ -1,0 +1,54 @@
+    <script>
+        function toggleModal(show) {
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+            const form = document.getElementById('modal-form');
+            const success = document.getElementById('modal-success');
+            
+            if (show) {
+                // Reset to form state when opening
+                form.classList.remove('hidden', 'opacity-0');
+                form.classList.add('flex', 'opacity-100');
+                
+                success.classList.add('hidden', 'opacity-0');
+                success.classList.remove('flex', 'opacity-100');
+
+                overlay.classList.remove('overlay-enter');
+                overlay.classList.add('overlay-active');
+                content.classList.remove('modal-enter');
+                content.classList.add('modal-active');
+            } else {
+                overlay.classList.remove('overlay-active');
+                overlay.classList.add('overlay-enter');
+                content.classList.remove('modal-active');
+                content.classList.add('modal-enter');
+            }
+        }
+
+        function submitForm() {
+            const form = document.getElementById('modal-form');
+            const success = document.getElementById('modal-success');
+
+            // Fade out form
+            form.classList.remove('opacity-100');
+            form.classList.add('opacity-0');
+
+            setTimeout(() => {
+                // Hide form, show success container
+                form.classList.remove('flex');
+                form.classList.add('hidden');
+                
+                success.classList.remove('hidden');
+                success.classList.add('flex');
+                
+                // Trigger reflow
+                void success.offsetWidth;
+
+                // Fade in success
+                success.classList.remove('opacity-0');
+                success.classList.add('opacity-100');
+            }, 300); // Wait for fade out
+        }
+    </script>
+
+</body></html>

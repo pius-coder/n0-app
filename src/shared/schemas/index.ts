@@ -20,3 +20,6 @@ export type { CreateOrderInput } from "./order.schema";
 
 export { paginationSchema, idSchema } from "./common.schema";
 export type { PaginationInput, IdInput } from "./common.schema";
+
+export { userHomeDataSchema } from "./user-home.schema";
+export type { UserHomeDataInput } from "./user-home.schema";

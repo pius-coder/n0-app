@@ -3,3 +3,4 @@ export { Card, CardHeader, CardTitle, CardContent, CardFooter } from "./card";
 export { Input, type InputProps } from "./input";
 export { Badge } from "./badge";
 export { Skeleton } from "./skeleton";
+export * from "./accordion";

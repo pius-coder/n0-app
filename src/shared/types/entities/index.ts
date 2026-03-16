@@ -7,3 +7,4 @@ export type {
   NumberCategory,
 } from "./number.types";
 export type { Order, OrderCreateInput } from "./order.types";
+export * from "./user-home.types";

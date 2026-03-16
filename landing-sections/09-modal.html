@@ -1,0 +1,60 @@
+    <!-- Modal Implementation -->
+    <!-- Overlay -->
+    <div id="modal-overlay" class="fixed inset-0 z-50 bg-[#F9FAFB]/80 backdrop-blur-md transition-all duration-300 overlay-enter" onclick="toggleModal(false)"></div>
+    
+    <!-- Modal Content -->
+    <div id="modal-content" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[51] w-full max-w-sm px-4 transition-all duration-300 modal-enter">
+        <div class="bg-white rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] p-8 md:p-10 flex flex-col items-center text-center relative overflow-hidden border border-gray-100 min-h-[420px] justify-center">
+            
+            <!-- Form State -->
+            <div id="modal-form" class="w-full flex flex-col items-center transition-opacity duration-300 opacity-100">
+                <!-- Modal Logo -->
+                <div class="mb-6">
+                    <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/0b2e12d6-456f-4c10-9db1-e243c0d82ac6_320w.png" alt="7K" class="h-10 w-auto object-contain">
+                </div>
+
+                <!-- Title -->
+                <h3 class="text-3xl font-bold tracking-tight text-gray-900 mb-2">mobile.7k.ag/you</h3>
+                
+                <!-- Subtitle -->
+                <p class="font-quicksand text-base text-gray-500 font-medium mb-8 leading-snug max-w-[260px]">
+                    Enter your info &amp; we'll contact you the instant we launch
+                </p>
+
+                <!-- Inputs -->
+                <div class="w-full space-y-4">
+                    <input type="email" placeholder="Enter your Email" class="w-full px-5 py-3.5 rounded-xl border-2 border-black text-gray-900 placeholder:text-gray-500 font-medium focus:outline-none focus:ring-0 transition-colors bg-white">
+                    
+                    <div class="relative w-full">
+                        <input type="text" placeholder="Your Username" class="w-full pl-5 pr-14 py-3.5 rounded-xl border-2 border-black text-gray-900 placeholder:text-gray-500 font-medium focus:outline-none focus:ring-0 transition-colors bg-white">
+                        <button onclick="submitForm()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-[#111] text-white p-2 rounded-lg hover:bg-gray-800 transition-colors">
+                            <iconify-icon icon="solar:arrow-right-linear" width="16" height="16" stroke-width="2.5"></iconify-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success State (Modified) -->
+            <div id="modal-success" class="w-full flex-col items-center hidden opacity-0 transition-opacity duration-300 absolute inset-0 justify-center p-8 text-center">
+                <!-- Logo -->
+                <div class="mb-8">
+                    <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/0b2e12d6-456f-4c10-9db1-e243c0d82ac6_320w.png" alt="7K" class="h-10 w-auto object-contain">
+                </div>
+                
+                <!-- Title (Centered) -->
+                <h3 class="text-3xl font-semibold tracking-tight text-gray-900 mb-4">Thank you!</h3>
+                
+                <!-- Subtext (Centered) -->
+                <p class="font-quicksand text-base text-gray-500 font-medium mb-10 leading-snug max-w-[280px] mx-auto">
+                    Your spot in the future of Sui is reserved. We'll send an invite to your inbox as soon as we're ready for you.
+                </p>
+
+                <!-- Close Button -->
+                <button onclick="toggleModal(false)" class="transition-all duration-300 active:scale-95 hover:bg-black hover:text-white hover:shadow-[0_0_20px_rgba(0,0,0,0.15)] text-sm font-semibold text-black bg-white border-black border-2 rounded-full px-10 py-2.5 shadow-none">
+                    Close
+                </button>
+            </div>
+
+        </div>
+    </div>
+

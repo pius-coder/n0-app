@@ -1,10 +1,39 @@
-import type { Metadata } from "next";
+import { Geist, Geist_Mono, Manrope, Fraunces, Syne, DM_Sans, DM_Mono } from "next/font/google";
+import { cn } from "@/client/lib/utils";
 import { APP_CONFIG } from "@/shared/constants";
+import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
 import "./globals.css";
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  style: ['normal', 'italic']
+});
+
+const syne = Syne({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-syne",
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-dm-sans",
+  display: "swap",
+});
+
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-dm-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -20,9 +49,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={cn("font-sans", geist.variable)}>
-      <body className="min-h-screen bg-white text-neutral-900 antialiased">
-        {children}
+    <html lang="fr" suppressHydrationWarning className={cn("font-sans", geist.variable, geistMono.variable, manrope.variable, fraunces.variable, syne.variable, dmSans.variable, dmMono.variable)}>
+      <body className="min-h-screen bg-background text-foreground antialiased font-manrope">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

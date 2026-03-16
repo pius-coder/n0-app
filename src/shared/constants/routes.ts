@@ -9,7 +9,8 @@ export const ROUTES = {
   },
 
   dashboard: {
-    root: "/numbers",
+    root: "/dashboard",
+    home: "/dashboard",
     numbers: "/numbers",
     number: (id: string) => `/numbers/${id}` as const,
     orders: "/orders",
@@ -21,6 +22,7 @@ export const ROUTES = {
     numbers: "/api/numbers",
     number: (id: string) => `/api/numbers/${id}` as const,
     orders: "/api/orders",
+    userHome: "/api/user-home",
     webhooks: {
       stripe: "/api/webhooks/stripe",
     },

@@ -8,9 +8,7 @@ export default function MarketingLayout({
 }) {
   return (
     <>
-      <Header />
       <main className="mx-auto max-w-7xl px-4">{children}</main>
-      <Footer />
     </>
   );
 }

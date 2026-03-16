@@ -8,6 +8,12 @@ export type {
   NumberCategory,
   Order,
   OrderCreateInput,
+  UserServer,
+  UserBalance,
+  UserService,
+  UserHomeData,
+  ServiceIconKey,
+  NavId,
 } from "./entities";
 
 export type {
