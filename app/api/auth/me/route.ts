@@ -3,6 +3,11 @@ import { UserQueries } from "@/server/db/queries/user.queries";
 import { AuthService } from "@/server/services";
 import { success, error } from "@/server/helpers";
 import { AUTH_CONFIG } from "@/shared/constants";
+import { createModuleLogger } from "@/packages/logger";
+
+const logger = createModuleLogger("api-auth-me");
+
+logger.info("GET /api/auth/me called");
 
 export async function GET(req: NextRequest) {
     const token = req.cookies.get(AUTH_CONFIG.TOKEN_NAME)?.value;

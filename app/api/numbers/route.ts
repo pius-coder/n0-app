@@ -3,6 +3,9 @@ import { NumberService } from "@/server/services";
 import { searchNumberSchema } from "@/shared/schemas";
 import { ValidationError } from "@/server/errors";
 import { success, error } from "@/server/helpers";
+import { createModuleLogger } from "@/packages/logger";
+
+const logger = createModuleLogger("api-numbers");
 
 export async function GET(req: NextRequest) {
   try {

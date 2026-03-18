@@ -1,48 +1,62 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import type { UserHomeData, ApiResponse } from "@/shared/types";
 import { ROUTES } from "@/shared/constants/routes";
 
-type UseUserHomeReturn = {
-  data: UserHomeData | null;
-  loading: boolean;
-  error: string | null;
-  refetch: () => void;
+type UseUserHomeOptions = {
+    initialData?: UserHomeData;
+    refetchInterval?: number | false;
 };
 
-export function useUserHome(): UseUserHomeReturn {
-  const [data, setData] = useState<UserHomeData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [tick, setTick] = useState(0);
+type UseUserHomeReturn = {
+    data: UserHomeData | undefined;
+    loading: boolean;
+    error: string | null;
+    refetch: () => void;
+    isFetching: boolean;
+};
 
-  useEffect(() => {
-    let cancelled = false;
+async function fetchUserHome(): Promise<UserHomeData> {
+    const res = await fetch(ROUTES.api.userHome);
+    const data = (await res.json()) as ApiResponse<UserHomeData>;
 
-    setLoading(true);
-    setError(null);
+    if (!data.success) {
+        throw new Error(data.error.message);
+    }
 
-    fetch(ROUTES.api.userHome)
-      .then((res) => res.json() as Promise<ApiResponse<UserHomeData>>)
-      .then((res) => {
-        if (cancelled) return;
-        if (!res.success) throw new Error(res.error.message);
-        setData(res.data);
-      })
-      .catch((e: Error) => {
-        if (!cancelled) setError(e.message);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [tick]);
-
-  const refetch = () => setTick((t) => t + 1);
-
-  return { data, loading, error, refetch };
+    return data.data;
 }
+
+export function useUserHome(
+    options: UseUserHomeOptions = {},
+): UseUserHomeReturn {
+    const { initialData, refetchInterval = 30000 } = options;
+
+    const query: UseQueryResult<UserHomeData, Error> = useQuery({
+        queryKey: ["user-home"],
+        queryFn: fetchUserHome,
+        initialData,
+        refetchInterval,
+        staleTime: 10000, // 10 seconds
+        gcTime: 5 * 60 * 1000, // 5 minutes
+        retry: 1,
+    });
+
+    return {
+        data: query.data,
+        loading: query.isLoading,
+        error: query.error?.message ?? null,
+        refetch: () => query.refetch(),
+        isFetching: query.isFetching,
+    };
+}
+
+export const userHomeKeys = {
+    all: ["user-home"] as const,
+    lists: () => [...userHomeKeys.all, "list"] as const,
+    list: (filters: Record<string, unknown>) =>
+        [...userHomeKeys.lists(), { filters }] as const,
+    details: () => [...userHomeKeys.all, "detail"] as const,
+    detail: (id: string) => [...userHomeKeys.details(), id] as const,
+};

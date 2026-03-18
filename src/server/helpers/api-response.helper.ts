@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import type { ApiResponse } from "@/shared/types";
 import { AppError } from "@/server/errors";
+import { createModuleLogger } from "@/packages/logger";
+
+const logger = createModuleLogger("api-response");
 
 export function success<T>(data: T, status = 200) {
   return NextResponse.json(
@@ -28,7 +31,7 @@ export function error(err: unknown) {
     );
   }
 
-  console.error("[_n0] Unexpected error:", err);
+  logger.error("Unexpected error in API response", err);
 
   return NextResponse.json(
     {

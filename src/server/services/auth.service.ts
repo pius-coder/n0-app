@@ -3,8 +3,11 @@ import { UserQueries } from "@/server/db/queries/user.queries";
 import { AUTH_CONFIG } from "@/shared/constants";
 import type { SessionUser, AuthPayload } from "@/shared/types";
 import type { LoginInput, RegisterServerInput } from "@/shared/schemas";
+import { createModuleLogger } from "@/packages/logger";
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
+
+const logger = createModuleLogger("auth");
 
 const secret = new TextEncoder().encode(AUTH_CONFIG.JWT_SECRET);
 
@@ -72,7 +75,7 @@ export const AuthService = {
 
             return Ok({ token, user: sessionUser });
         } catch (e) {
-            console.error("[AuthService] Registration error:", e);
+            logger.error("Registration error", e);
             return Err(new Error("Une erreur est survenue lors de l'inscription."));
         }
     },

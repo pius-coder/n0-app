@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { AUTH_CONFIG } from "@/shared/constants/auth.constants";
+import { createModuleLogger } from "@/packages/logger";
+
+const logger = createModuleLogger("middleware");
 
 const secret = new TextEncoder().encode(AUTH_CONFIG.JWT_SECRET);
 

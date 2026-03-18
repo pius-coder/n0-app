@@ -8,20 +8,20 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  phone        String   @unique
-  email        String?  @unique
-  name         String?
-  avatarUrl    String?  @map("avatar_url")
-  passwordHash String   @map("password_hash")
-  role         Role     @default(USER)
-  credits      Int      @default(0)
-  isActive     Boolean  @default(true) @map("is_active")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-
-  orders       Order[]
-  transactions Transaction[]
+  id             String           @id @default(cuid())
+  phone          String           @unique
+  email          String?          @unique
+  name           String?
+  avatarUrl      String?          @map("avatar_url")
+  passwordHash   String           @map("password_hash")
+  role           Role             @default(USER)
+  credits        Int              @default(0)
+  isActive       Boolean          @default(true) @map("is_active")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  active_numbers active_numbers[]
+  orders         Order[]
+  transactions   Transaction[]
 
   @@map("users")
 }
@@ -37,8 +37,7 @@ model Order {
   expiresAt   DateTime    @map("expires_at")
   createdAt   DateTime    @default(now()) @map("created_at")
   updatedAt   DateTime    @updatedAt @map("updated_at")
-
-  user User @relation(fields: [userId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
 
   @@map("orders")
 }
@@ -51,10 +50,113 @@ model Transaction {
   status    TxStatus @default(COMPLETED)
   metadata  Json?
   createdAt DateTime @default(now()) @map("created_at")
-
-  user User @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@map("transactions")
+}
+
+model active_numbers {
+  id           String             @id
+  user_id      String
+  service_id   String
+  country_id   String
+  provider_id  String
+  phone_number String
+  external_id  String
+  sms_code     String?
+  full_sms     String?
+  status       ActiveNumberStatus @default(PENDING)
+  credits_cost Int
+  expires_at   DateTime
+  created_at   DateTime           @default(now())
+  updated_at   DateTime
+  countries    countries          @relation(fields: [country_id], references: [id])
+  providers    providers          @relation(fields: [provider_id], references: [id])
+  services     services           @relation(fields: [service_id], references: [id])
+  users        User               @relation(fields: [user_id], references: [id])
+}
+
+model countries {
+  id                        String                      @id
+  name                      String
+  iso_code                  String                      @unique
+  phone_prefix              String
+  flag_emoji                String
+  is_active                 Boolean                     @default(true)
+  active_numbers            active_numbers[]
+  provider_country_mappings provider_country_mappings[]
+  service_countries         service_countries[]
+}
+
+model provider_country_mappings {
+  id                  String    @id
+  provider_id         String
+  country_id          String
+  external_country_id String
+  is_active           Boolean   @default(true)
+  countries           countries @relation(fields: [country_id], references: [id])
+  providers           providers @relation(fields: [provider_id], references: [id])
+
+  @@unique([provider_id, country_id])
+}
+
+model provider_service_mappings {
+  id                  String    @id
+  provider_id         String
+  service_id          String
+  external_service_id String
+  is_active           Boolean   @default(true)
+  providers           providers @relation(fields: [provider_id], references: [id])
+  services            services  @relation(fields: [service_id], references: [id])
+
+  @@unique([provider_id, service_id])
+}
+
+model providers {
+  id                        String                      @id
+  name                      String                      @unique
+  display_name              String
+  base_url                  String
+  api_key                   String
+  status                    ProviderStatus              @default(ACTIVE)
+  is_default                Boolean                     @default(false)
+  priority                  Int                         @default(1)
+  balance                   Float                       @default(0)
+  balance_checked_at        DateTime?
+  created_at                DateTime                    @default(now())
+  updated_at                DateTime
+  active_numbers            active_numbers[]
+  provider_country_mappings provider_country_mappings[]
+  provider_service_mappings provider_service_mappings[]
+}
+
+model service_countries {
+  id              String    @id
+  service_id      String
+  country_id      String
+  credit_price    Int
+  provider_cost   Float
+  available_count Int       @default(0)
+  is_active       Boolean   @default(true)
+  last_sync_at    DateTime  @default(now())
+  countries       countries @relation(fields: [country_id], references: [id])
+  services        services  @relation(fields: [service_id], references: [id])
+
+  @@unique([service_id, country_id])
+}
+
+model services {
+  id                        String                      @id
+  name                      String
+  slug                      String                      @unique
+  short_code                String                      @unique
+  icon_url                  String?
+  is_active                 Boolean                     @default(true)
+  created_at                DateTime                    @default(now())
+  updated_at                DateTime
+  active_numbers            active_numbers[]
+  provider_service_mappings provider_service_mappings[]
+  service_countries         service_countries[]
 }
 
 enum Role {
@@ -80,4 +182,29 @@ enum TxStatus {
   PENDING
   COMPLETED
   FAILED
+}
+
+enum ActiveNumberStatus {
+  PENDING
+  WAITING_SMS
+  RECEIVED
+  COMPLETED
+  CANCELLED
+  EXPIRED
+  ERROR
+}
+
+enum PaymentMethodType {
+  FAPSHI
+  ORANGE_MONEY
+  MTN_MONEY
+  CARD
+  CRYPTO
+}
+
+enum ProviderStatus {
+  ACTIVE
+  INACTIVE
+  ERROR
+  MAINTENANCE
 }
